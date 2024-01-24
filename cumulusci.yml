@@ -9,6 +9,12 @@ project:
   source_format: sfdx
 
 tasks:
+  deploy:
+    options:
+      path: sprint-estimator
+  retrieve_changes:
+    options:
+      path: sprint-estimator
   robot:
     options:
       suites: robot/sprint-estimator/tests

@@ -1,3 +1,0 @@
-<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId">
-    <aura:handler event="force:showToast" action="{!c.refreshView}" />
-</aura:component>
