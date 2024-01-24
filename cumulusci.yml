@@ -15,6 +15,9 @@ tasks:
   retrieve_changes:
     options:
       path: sprint-estimator
+  create_package_version:
+    options:
+      package_type: Unlocked
   robot:
     options:
       suites: robot/sprint-estimator/tests
