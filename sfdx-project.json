@@ -1,10 +1,17 @@
 {
-    "namespace": null,
+    "namespace": "",
     "packageDirectories": [
         {
             "default": true,
-            "path": "sprint-estimator"
+            "path": "sprint-estimator",
+            "package": "sprint-estimator",
+            "versionName": "ver 0.1",
+            "versionNumber": "0.1.0.NEXT",
+            "versionDescription": "Used to estimate the sprint LOE"
         }
     ],
-    "sourceApiVersion": "59.0"
+    "sourceApiVersion": "59.0",
+    "packageAliases": {
+      "sprint-estimator": "0Hoak000000009hCAA"
+    }
 }
