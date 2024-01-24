@@ -1,0 +1,14 @@
+{
+    "namespace": null,
+    "packageDirectories": [
+        {
+            "default": true,
+            "path": "sprint-estimator"
+        },
+        {
+            "default": false,
+            "path": "error-logging"
+        }
+    ],
+    "sourceApiVersion": "59.0"
+}
