@@ -5,6 +5,10 @@
         <name>CompactLayout</name>
     </types>
     <types>
+        <members>Sprint_Estimator</members>
+        <name>CustomApplication</name>
+    </types>
+    <types>
         <members>Sprint_Estimate_Bucket__c.Details__c</members>
         <members>Sprint_Estimate_Bucket__c.Rough_LOE__c</members>
         <members>Sprint_Estimate_Bucket__c.Short_Description__c</members>
@@ -31,10 +35,31 @@
         <name>CustomObject</name>
     </types>
     <types>
+        <members>Sprint_Estimate_Bucket__c</members>
+        <members>Sprint_Estimate__c</members>
+        <members>Sprint_Resource__c</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
+        <members>Sprint_Est_UtilityBar</members>
+        <members>Sprint_Estimate</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
+        <members>Sprint_Estimate_Bucket__c-Sprint Estimate Bucket Layout</members>
+        <members>Sprint_Estimate__c-Sprint Estimate Layout</members>
+        <members>Sprint_Resource__c-Sprint Resource Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
         <members>Sprint_Estimate_Bucket__c.All</members>
         <members>Sprint_Estimate__c.All</members>
         <members>Sprint_Resource__c.All</members>
         <name>ListView</name>
+    </types>
+    <types>
+        <members>Sprint_Estimate__c.New_Sprint_Resource</members>
+        <name>QuickAction</name>
     </types>
     <version>60.0</version>
 </Package>

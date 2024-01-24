@@ -1,25 +1,25 @@
-minimum_cumulusci_version: '3.83.0'
+minimum_cumulusci_version: "3.83.0"
 project:
+  name: sprint-estimator
+  package:
     name: sprint-estimator
-    package:
-        name: sprint-estimator
-        api_version: '59.0'
-    git:
-        default_branch: 'main'
-    source_format: sfdx
+    api_version: "59.0"
+  git:
+    default_branch: "main"
+  source_format: sfdx
 
 tasks:
-    robot:
-        options:
-            suites: robot/sprint-estimator/tests
-            options:
-                outputdir: robot/sprint-estimator/results
+  robot:
+    options:
+      suites: robot/sprint-estimator/tests
+      options:
+        outputdir: robot/sprint-estimator/results
 
-    robot_testdoc:
-        options:
-            path: robot/sprint-estimator/tests
-            output: robot/sprint-estimator/doc/sprint-estimator_tests.html
+  robot_testdoc:
+    options:
+      path: robot/sprint-estimator/tests
+      output: robot/sprint-estimator/doc/sprint-estimator_tests.html
 
-    run_tests:
-        options:
-            required_org_code_coverage_percent: 75
+  run_tests:
+    options:
+      required_org_code_coverage_percent: 75
