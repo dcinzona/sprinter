@@ -10,3 +10,10 @@ To work on this project in a scratch org:
 1. [Set up CumulusCI](https://cumulusci.readthedocs.io/en/latest/tutorial.html)
 2. Run `cci flow run dev_org --org dev` to deploy this project.
 3. Run `cci org browser dev` to open the org in your browser.
+
+
+## Some commands:
+
+- install the latest beta; `cci task run install_managed_beta --name sprint-estimator --org dev`
+- create a beta: `cci flow run release_unlocked_beta`
+- build test: `cci flow run build_unlocked_test_package`

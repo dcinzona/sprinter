@@ -8,10 +8,18 @@
             "versionName": "ver 0.1",
             "versionNumber": "0.1.0.NEXT",
             "versionDescription": "Used to estimate the sprint LOE"
+        },
+        {
+            "default": false,
+            "path": "account-hierarchy",
+            "package": "account-hierarchy",
+            "versionName": "ver 0.1",
+            "versionNumber": "0.1.0.NEXT",
+            "versionDescription": "Used to estimate the sprint LOE"
         }
     ],
     "sourceApiVersion": "59.0",
     "packageAliases": {
-      "sprint-estimator": "0Hoak000000009hCAA"
+        "sprint-estimator": "0Hoak000000009hCAA"
     }
 }
