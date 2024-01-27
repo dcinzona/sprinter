@@ -37,6 +37,6 @@ private class LWC_AccountHierarchyGrid_TEST {
         List<Account> acts = AccountHierarchy_TEST.getAllChildAccounts();
         System.assert(acts.size()>3, 'Not enough child accounts');
         List<Account> hierarchy = AccountHierarchyCmpController.findAllHierarchyAccounts(acts[2].Id);
-        System.assert(hierarchy.size() > 3, hierarchy);
+        System.assert(hierarchy.size() > 3, hierarchy.size());
     }
 }

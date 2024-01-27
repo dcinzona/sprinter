@@ -11,14 +11,23 @@ const COLLS = [
         },
     },
     {
-        type: "text",
-        fieldName: "Industry",
-        label: "Industry",
+        type: "url",
+        fieldName: "ContractURL",
+        label: "Contract Number",
+        typeAttributes: {
+            label: { fieldName: "ContractNumber" },
+            target: "_self",
+        },
+        cellAttributes: {
+            iconName: { fieldName: "iconName" },
+            iconPosition: "left",
+            iconAlternativeText: "Contract",
+        },
     },
     {
         type: "text",
-        fieldName: "Type",
-        label: "Type",
+        fieldName: "ContractStatus",
+        label: "Contract Status",
     },
 ];
 
@@ -41,14 +50,12 @@ export default class Accountgrid extends LightningElement {
             var expandedRowInfo = [];
             console.log(data);
             for (var i = 0; i < data.length; i++) {
-                if (data[i].ChildAccounts) {
+                if (data[i].ChildAccounts || data[i].Contracts) {
                     expandedRowInfo.push(data[i].Id);
                     this.roles[data[i].Id] = {
                         accountName: data[i].Name,
                         Id: data[i].Id,
                         AccountURL: "/" + data[i].Id,
-                        Type: data[i].Type ? data[i].Type : "",
-                        Industry: data[i].Industry ? data[i].Industry : "",
                         _children: [],
                     };
                 } else {
@@ -56,9 +63,19 @@ export default class Accountgrid extends LightningElement {
                         accountName: data[i].Name,
                         Id: data[i].Id,
                         AccountURL: "/" + data[i].Id,
-                        Type: data[i].Type ? data[i].Type : "",
-                        Industry: data[i].Industry ? data[i].Industry : "",
                     };
+                }
+                if (data[i].Contracts) {
+                    for (var j = 0; j < data[i].Contracts.length; j++) {
+                        this.roles[data[i].Id]._children.push({
+                            accountName: data[i].Name,
+                            Id: data[i].Contracts[j].Id,
+                            ContractURL: "/" + data[i].Contracts[j].Id,
+                            ContractNumber: data[i].Contracts[j].ContractNumber,
+                            ContractStatus: data[i].Contracts[j].Status,
+                            iconName: "standard:contract",
+                        });
+                    }
                 }
             }
 
@@ -69,14 +86,15 @@ export default class Accountgrid extends LightningElement {
                     }
                 }
             }
-            //console.log('***after adding childrens :'+JSON.stringify(this.roles));
+
             for (var i = 0; i < data.length; i++) {
                 if (data[i].ParentId) {
+                    // child account record so don't do anything
                 } else {
                     finaldata.push(this.roles[data[i].Id]);
                 }
             }
-            console.log("***finaldata :" + JSON.stringify(finaldata));
+            console.log(JSON.stringify(finaldata));
             this.gridData = finaldata;
             this.currentExpandedRows = expandedRowInfo;
             console.log("***currentExpandedRows 2:" + JSON.stringify(this.currentExpandedRows));

@@ -1,8 +1,33 @@
 <template>
-    <div>
-        <lightning-card title="Account Hierarcy">
-            <lightning-tree-grid columns={gridColumns} data={gridData} key-field="Id" hide-checkbox-column="true" expanded-rows={currentExpandedRows}>
-            </lightning-tree-grid>
-        </lightning-card>
+    <div class="slds-card slds-card_boundary">
+        <div class="slds-page-header slds-page-header_joined slds-page-header_bleed slds-shrink-none test-headerRegion slds-is-relative">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="standard:account"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span>Account Hierarchy</span>
+                                        <span class="slds-page-header__title slds-truncate" title="Accounts and Contracts">Accounts and Contracts</span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-grid slds-border__left slds-border__right listViewContainer slds-border_top">
+            <div class="slds-col slds-no-space display-wrapper">
+                <lightning-tree-grid columns={gridColumns} data={gridData} key-field="Id" hide-checkbox-column="true" expanded-rows={currentExpandedRows} resize-column-disabled>
+                </lightning-tree-grid>
+            </div>
+        </div>
+        <div class="slds-card__footer">
+        </div>
     </div>
 </template>
