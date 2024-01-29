@@ -2,37 +2,32 @@ public with sharing class AccountHierarchyCmpController {
 
     @AuraEnabled(cacheable=true)
     public static list<Account> findAllHierarchyAccounts(string recordId){
-        list<Account> allAccountList=new List<Account>();
-        Id ultimateAccountId;
-        Set<Id> uniqueAccountIds = new Set<Id>();
-        try{
-            for(Account acc:[SELECT Id, ParentId, Ultimate_Account_Id__c from Account where Id=:recordId WITH SECURITY_ENFORCED]){
-                ultimateAccountId = acc.ParentId == null ? acc.Id : acc.Ultimate_Account_Id__c;
-            }
+        Id rootAccountId;
+        List<Account> accounts = new List<Account>();
+        
+        //get root record id from current record
+        if(Schema.sObjectType.Account.fields.Root_Record_Id__c.isAccessible()){
             
-            if(string.isNotBlank(ultimateAccountId)){
-                for(Account acc:[SELECT Id,(SELECT Id FROM ChildAccounts), (SELECT Id, AccountId, ContractNumber, Status FROM Contracts), Name, ParentId, Type, Parent.Name, Industry FROM Account 
-                WHERE Ultimate_Account_Id__c=:ultimateAccountId OR Id =: ultimateAccountId WITH SECURITY_ENFORCED ORDER BY ParentId NULLS FIRST]){
-                    allAccountList.add(acc);
-                    uniqueAccountIds.add(acc.Id);
-                }
+            Account currentAccount = [SELECT Id, ParentId, Root_Record_Id__c FROM Account WHERE Id=:recordId WITH USER_MODE LIMIT 1];
+            rootAccountId = currentAccount.ParentId == null ? currentAccount.Id : currentAccount.Root_Record_Id__c;
+            System.debug('Root account Id: ' + rootAccountId);
+            
+            if(Schema.SObjectType.Contract.isAccessible() && String.isNotBlank(rootAccountId)){
+                accounts = [
+                        SELECT Id,
+                        (SELECT Id FROM ChildAccounts), 
+                        (SELECT Id, AccountId, ContractNumber, Status FROM Contracts), 
+                        Name, 
+                        ParentId
+                        FROM Account 
+                        WHERE Root_Record_Id__c=:rootAccountId OR Id =: rootAccountId 
+                        WITH USER_MODE
+                        ORDER BY ParentId NULLS FIRST
+                        ];
             }
-
-        } catch (Exception ex){
-            System.debug('You dont have access to all Account fields \n' + ex.getMessage());
         }
-        system.debug('***allAccountList size:'+allAccountList);
-        return allAccountList;
-    }
+                
+        return accounts;
 
-    // public static List<Contract> getContractsForAccounts(Set<Id>accountIds){
-    //     List<Contract> contracts = new List<Contract>();
-    //     try {
-    //         contracts = [SELECT Id, AccountId FROM Contract WHERE AccountId IN :accountIds WITH SECURITY_ENFORCED];
-    //     } catch (Exception ex){
-    //         System.debug('No access to the appropriate objects \n' + ex.getMessage());
-    //     }
-    //     System.debug(contracts);
-    //     return contracts;
-    // }
+    }
 }

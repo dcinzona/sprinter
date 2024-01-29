@@ -24,19 +24,42 @@ private class LWC_AccountHierarchyGrid_TEST {
 
     @TestSetup
     static void makeData(){
-        List<Account> accounts = new List<Account>();
-        for(integer i = 0; i < 200; i++){
-            accounts.add(new Account(Name='test account '+ i));
-        }
-        insert accounts;
-        AccountHierarchy_TEST.setParentLevels(5);
+        AccountHierarchy_TEST.assignPermSet();
+        AccountHierarchy_TEST.createAccounts(200);
+        AccountHierarchy_TEST.setParentLevels(6);
     }
 
     @isTest
     static void testController() {
-        List<Account> acts = AccountHierarchy_TEST.getAllChildAccounts();
-        System.assert(acts.size()>3, 'Not enough child accounts');
-        List<Account> hierarchy = AccountHierarchyCmpController.findAllHierarchyAccounts(acts[2].Id);
-        System.assert(hierarchy.size() > 3, hierarchy.size());
+        System.runAs(new User(Id = UserInfo.getUserId())) {
+            List<Account> roots = AccountHierarchy_TEST.getAllRootAccounts();
+            List<Account> acts = AccountHierarchy_TEST.getAllChildAccounts();
+            System.assert(acts.size()>3, 'Not enough child accounts');
+            List<Account> hierarchy = AccountHierarchyCmpController.findAllHierarchyAccounts(roots[0].Id);
+            System.debug(hierarchy.size());
+            System.assert(hierarchy.size() == 6, 'Hierarchy size did not equal 6.  Size: ' + hierarchy.size());
+            System.debug(hierarchy[0]);
+        }
+    }
+    @isTest
+    static void testNoAccess() {
+        Profile p = [SELECT Id FROM Profile WHERE Name='Standard User'];
+        User u = new User(Alias = 'standt', Email='standarduser@testorg.com',
+            EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US',
+            LocaleSidKey='en_US', ProfileId = p.Id,
+            TimeZoneSidKey='America/Los_Angeles',
+            UserName='standarduser' + DateTime.now().getTime() + '@testorg.com');
+
+        System.runAs(u) {
+            AccountHierarchy_TEST.createAccounts(20);
+            AccountHierarchy_TEST.setParentLevels(2);
+            Test.startTest();
+            List<Account> roots = AccountHierarchy_TEST.getAllRootAccounts();
+            List<Account> acts = AccountHierarchy_TEST.getAllChildAccounts();
+            System.assert(acts.size()>3, 'Not enough child accounts');
+            List<Account> hierarchy = AccountHierarchyCmpController.findAllHierarchyAccounts(roots[0].Id);
+            System.assert(hierarchy.size() == 0, 'Hierarchy should not have returned any records.  Size: ' + hierarchy.size());
+            Test.stopTest();
+        }
     }
 }
