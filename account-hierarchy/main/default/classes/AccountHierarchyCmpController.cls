@@ -19,7 +19,7 @@ public with sharing class AccountHierarchyCmpController {
             }
 
         } catch (Exception ex){
-            System.debug('You dont have access to all Account fields \n' + ex);
+            System.debug('You dont have access to all Account fields \n' + ex.getMessage());
         }
         system.debug('***allAccountList size:'+allAccountList);
         return allAccountList;

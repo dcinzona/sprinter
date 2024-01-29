@@ -25,7 +25,7 @@ private class LWC_AccountHierarchyGrid_TEST {
     @TestSetup
     static void makeData(){
         List<Account> accounts = new List<Account>();
-        for(integer i = 0; i < 20; i++){
+        for(integer i = 0; i < 200; i++){
             accounts.add(new Account(Name='test account '+ i));
         }
         insert accounts;

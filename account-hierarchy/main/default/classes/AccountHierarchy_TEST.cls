@@ -22,20 +22,10 @@
 @isTest
 public class AccountHierarchy_TEST {
 
+
     @TestSetup
     static void makeData(){
-        List<Account> accounts = new List<Account>();
-        for(integer i = 0; i < 20; i++){
-            accounts.add(new Account(Name='test account '+ i));
-        }
-        insert accounts;
-    }
-
-    public static List<Account> getAccounts(){
-        return [SELECT Id, ParentId, Ultimate_Parent_Formula__c, Ultimate_Account_Id__c FROM Account];
-    }
-   public static List<Account> getAllChildAccounts(){
-        return [SELECT Id, ParentId, Ultimate_Parent_Formula__c, Ultimate_Account_Id__c FROM Account WHERE ParentId != null];
+        createAccounts(200);
     }
 
     @isTest
@@ -49,46 +39,81 @@ public class AccountHierarchy_TEST {
     }
 
     @isTest
-    static void testAccountParentLevel1() {
-        // TO DO: implement unit test
-        Account root = setParentLevels(1);
-        List<Account> childAccounts = getAllChildAccounts();
-        for(Account child: childAccounts){
-            System.assert(child.ParentId == root.Id);
-            System.assert(child.Ultimate_Account_Id__c == root.Id);
+    static void testAccountParentLevels() {
+        Account root = AccountHierarchy_TEST.setParentLevels(MAX_DEPTH);
+        Set<Id> rootIds = new Set<Id>();
+        for(Account rootAct : getAllRootAccounts()){
+            rootIds.add(rootAct.Id);
         }
-    }
-
-    public static Account setParentLevels(Integer levels){
-        Account root = null;
-        if(Test.isRunningTest()){
-            Account prev = null;
-            List<Account> acts = getAccounts();
-            System.Assert(levels <= acts.size(), 'Not enough accounts to process ' + levels + ' levels. Total Accounts: ' + acts.size());
-            for(Integer i = 0; i < levels; i++){
-                Account cur = acts[i];
-                if(prev == null){
-                    root = acts[i];
-                    prev = root;
-                } else {
-                    cur.ParentId = prev.Id;
-                    prev = cur;
-                }
-            }
-            update acts;
-        }
-        return root;
-    }
-
-    @isTest
-    static void testAccountParentLevel6() {
-        // TO DO: implement unit test
-        Account root = AccountHierarchy_TEST.setParentLevels(6);
         List<Account> childAccounts = getAllChildAccounts();
         for(Account child :childAccounts){
             System.Assert(String.isNotBlank(child.Ultimate_Account_Id__c), 'Child Account has a parent but root was blank');
-            System.Assert(child.Ultimate_Account_Id__c == root.Id, 'Child Account has a parent but root ('+ child.Ultimate_Account_Id__c+') was not correct. Should have been ' + root.Id);
             System.Assert(child.Ultimate_Account_Id__c == child.Ultimate_Parent_Formula__c, 'Mismatch ultimate parent ('+child.Ultimate_Account_Id__c+') and formula ('+child.Ultimate_Parent_Formula__c+')');
         }
+
+        Account child = childAccounts[childAccounts.size() - 1];
+
+        System.Assert(child.Ultimate_Account_Id__c == root.Id, 'Child Account has a parent but root ('+ child.Ultimate_Account_Id__c+') was not correct. Should have been ' + root.Id);
     }
+
+
+    /*******************
+     * UTILITY METHODS *
+     *******************/
+
+    static Integer MAX_DEPTH = 6;
+
+    public static List<Account> createAccounts(Integer numberOfAccounts){
+        List<Account> accountsList = new List<Account>();
+        List<Account> parentAccounts = new List<Account>();
+        for(Integer i = 0; i< numberOfAccounts; i++){
+            Account act = new Account(Name='test account '+ i);
+            accountsList.add(act);
+        }
+        insert accountsList;
+
+        return accountsList;
+    }
+
+    public static Account setParentLevels(Integer levels){
+        System.assert(levels <= MAX_DEPTH, 'Cannot process more than ' + MAX_DEPTH + ' levels');
+
+        Account root = null;
+        List<Account> acts = getAccounts();
+        System.Assert(levels <= acts.size(), 'Not enough accounts to process ' + levels + ' levels. Total Accounts: ' + acts.size());
+        Integer curLevel = 0;
+        for(Integer i = 0; i < acts.size(); i++){
+            // don't set parent for first account record.
+            if(i==0){
+                root = acts[i];
+                continue;
+            }
+            Account cur = acts[i];
+            if(curLevel >= levels-1){
+                // set new root
+                root = cur;
+                curLevel = 0;
+                // don't set a parent      
+                continue;
+            }
+            cur.ParentId = curLevel == 0 ? root.Id : acts[i-1].Id;
+            curLevel++;
+        }
+        update acts;
+
+        return root;
+    }
+
+    public static List<Account> getAccounts(){
+        return [SELECT Id, ParentId, Ultimate_Parent_Formula__c, Ultimate_Account_Id__c FROM Account];
+    }
+
+    public static List<Account> getAllRootAccounts(){
+        return [SELECT Id FROM Account WHERE ParentId = null];
+    }
+
+    public static List<Account> getAllChildAccounts(){
+        return [SELECT Id, ParentId, Ultimate_Parent_Formula__c, Ultimate_Account_Id__c FROM Account WHERE ParentId != null];
+    }
+
 }
