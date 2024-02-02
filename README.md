@@ -80,3 +80,28 @@ _Requires creating a package version first_
 ```bash
 sf package install --package AccountHierarchyUnlocked -k password123 -o devscratch
 ```
+
+## Data Manipulation
+
+### Seed Account records with a hierarchy
+
+Insert account records with contracts (assumes you've isntalled the account-hierarchy package and assigned yourself the permission set).
+
+1. Assign yourself the permission set `Account Hierarchy OWD FLS` (if you haven't already).
+```bash 
+sf org assign permset --name Account_Hierarchy_OWD_FLS
+```
+2. Import the sample data provided in the `sample-data` folder.
+
+```bash
+# RUN FROM ROOT OF REPO
+sf data import tree --target-org org-needs-data \
+  --plan sample-data/data/hierarchy-Account-Contract-plan.json
+```
+
+Example Shell Scripts:
+- SF Query `./sample-data/sf_query.sh`
+- SF Export `./sample-data/sf_export.sh`
+- SF Import `./sample-data/sf_import.sh`
+
+Documentation: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_test_data_example.htm

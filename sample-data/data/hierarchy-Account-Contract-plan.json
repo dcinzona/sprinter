@@ -1,0 +1,18 @@
+[
+    {
+        "sobject": "Account",
+        "saveRefs": true,
+        "resolveRefs": false,
+        "files": [
+            "hierarchy-Accounts.json"
+        ]
+    },
+    {
+        "sobject": "Contract",
+        "saveRefs": false,
+        "resolveRefs": true,
+        "files": [
+            "hierarchy-Contracts.json"
+        ]
+    }
+]
