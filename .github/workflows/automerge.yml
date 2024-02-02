@@ -19,7 +19,6 @@ on:
 env:
   SF_AUDIENCE_URL: https://test.salesforce.com # Use https://login.salesforce.com for production instances. Use https://test.salesforce.com for sandboxes
   ORG_NAME: devhub
-  SOURCE_DIR: sprint-estimator
 
 jobs:
   Deploy:
