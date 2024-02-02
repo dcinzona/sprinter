@@ -1,0 +1,74 @@
+name: Deployments:PR CI/CD - Pull Request Against dev or main
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+  push:
+    branches:
+      - dev
+      - main
+
+env:
+  SF_AUDIENCE_URL: https://test.salesforce.com # Use https://login.salesforce.com for production instances. Use https://test.salesforce.com for sandboxes
+  ORG_NAME: devhub
+  SOURCE_DIR: sprint-estimator
+
+jobs:
+  Deploy:
+    name: Bugfixes/Features Merge-Process
+    runs-on: ubuntu-latest
+    steps:
+      - if: github.event_name == 'pull_request'
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.GITHUB_HEAD_REF }}
+          fetch-depth: 0
+      - if: github.event_name == 'push'
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.GITHUB_REF_NAME }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ">=14"
+          check-latest: true
+
+      - name: Install SFDX
+        run: |
+          npm install @salesforce/cli
+          node_modules/@salesforce/cli/bin/run --version
+          node_modules/@salesforce/cli/bin/run plugins --core
+
+      - name: "Populate auth file with SFDX_URL secret"
+        run: |
+          echo "${{ secrets.SALESFORCE_AUTHURL_DEVSBX }}" > SFDX_AUTHURL
+          echo "${{ secrets.SALESFORCE_AUTHURL_DEVHUB }}" > SFDX_AUTHURL_DEVHUB
+
+      - name: Authenticate Salesforce Org
+        run: |
+          node_modules/@salesforce/cli/bin/run force:auth:sfdxurl:store -f SFDX_AUTHURL -s -a ${{ env.ORG_NAME }}
+          node_modules/@salesforce/cli/bin/run force:auth:sfdxurl:store -f SFDX_AUTHURL_DEVHUB -s -a devhub
+
+      - name: Deploy source
+        id: Deploy
+        if: github.event_name == 'push'
+        run: |
+          node_modules/@salesforce/cli/bin/run project deploy start --ignore-conflicts -o ${{ env.ORG_NAME }}
+
+      - name: Check Scratch Org Push
+        id: ScratchOrgCreate
+        if: github.event_name == 'pull_request'
+        run: |
+          node_modules/@salesforce/cli/bin/run org create scratch --definition-file orgs/dev.json --alias MergeScratch --set-default --target-dev-hub devhub -w 20
+          echo 'Installing Account Hierarchy package...'
+          node_modules/@salesforce/cli/bin/run project deploy start --source-dir account-hierarchy -c --ignore-conflicts -o MergeScratch
+          echo 'Installing Sprint Estimator package...'
+          node_modules/@salesforce/cli/bin/run project deploy start --source-dir sprint-estimator -c --ignore-conflicts -o MergeScratch
+
+      - name: Delete Scratch Org
+        id: ScratchOrgDelete
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        run: |
+          node_modules/@salesforce/cli/bin/run org:delete:scratch -o MergeScratch -p
