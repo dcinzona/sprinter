@@ -5,10 +5,16 @@ on:
     branches:
       - dev
       - main
+    paths:
+      - "account-hierarchy/**"
+      - "sprint-estimator/**"
   push:
     branches:
       - dev
       - main
+    paths:
+      - "account-hierarchy/**"
+      - "sprint-estimator/**"
 
 env:
   SF_AUDIENCE_URL: https://test.salesforce.com # Use https://login.salesforce.com for production instances. Use https://test.salesforce.com for sandboxes
