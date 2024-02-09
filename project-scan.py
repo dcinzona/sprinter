@@ -1,6 +1,6 @@
 # Scan and compare project source directories for duplicate metadata using file path and file names, and file API names and labels.
 # This script is intended to be run from the command line.
-# Usage: python project-scan.py <project_directory>
+# Usage: python project-scan.py
 
 import os
 import json
