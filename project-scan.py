@@ -37,6 +37,8 @@ for package_directory in package_directories_path:
 # if any files have the same name, add them to the list of duplicate files
 scanned_files = dict()
 duplicate_files = []
+
+
 def get_duplicate_files(metadata_folder, package_path):
     for root, dirs, files in os.walk(metadata_folder):
         for file in files:
