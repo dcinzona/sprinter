@@ -1,4 +1,6 @@
-name: Deployments:PR CI/CD - Pull Request Against dev or main
+
+name: PR Checks
+run-name: Checks running whenever new PR is created
 
 on:
   pull_request:
@@ -8,72 +10,56 @@ on:
     paths:
       - "account-hierarchy/**"
       - "sprint-estimator/**"
-  push:
-    branches:
-      - dev
-      - main
-    paths:
-      - "account-hierarchy/**"
-      - "sprint-estimator/**"
-
-env:
-  SF_AUDIENCE_URL: https://test.salesforce.com # Use https://login.salesforce.com for production instances. Use https://test.salesforce.com for sandboxes
-  ORG_NAME: devhub
 
 jobs:
-  Deploy:
-    name: Bugfixes/Features Merge-Process
+  build:
     runs-on: ubuntu-latest
     steps:
-      - if: github.event_name == 'pull_request'
-        uses: actions/checkout@v2
+      # Checkout the Source code from the latest commit
+      - uses: actions/checkout@v3
         with:
-          ref: ${{ env.GITHUB_HEAD_REF }}
           fetch-depth: 0
-      - if: github.event_name == 'push'
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.GITHUB_REF_NAME }}
-          fetch-depth: 0
-      - uses: actions/setup-node@v1
-        with:
-          node-version: ">=14"
-          check-latest: true
 
-      - name: Install SFDX
+      # Installing NPM so that SFDX can be installed
+      - name: Installing NPM
         run: |
-          npm install @salesforce/cli
-          node_modules/@salesforce/cli/bin/run --version
-          node_modules/@salesforce/cli/bin/run plugins --core
+          npm install
+      
+      # Installing SFDX CLI
+      - name: Installing SFDX CLI
+        run: |
+          npm install @salesforce/cli --global
 
-      - name: "Populate auth file with SFDX_URL secret"
+      # Creating new .key for .crt file stored in the Connected App
+      - name: Creating .key file
         run: |
-          echo "${{ secrets.SALESFORCE_AUTHURL_DEVSBX }}" > SFDX_AUTHURL
-          echo "${{ secrets.SALESFORCE_AUTHURL_DEVHUB }}" > SFDX_AUTHURL_DEVHUB
-
-      - name: Authenticate Salesforce Org
+          touch server.key
+          echo -e "${{ secrets.SF_CICD_SERVERKEY }}" >> server.key
+      
+      # Authorizing to DevHub
+      - name: Authorizing the DevHub
+        run: sf org login jwt --json --alias devhub --set-default --set-default-dev-hub --username "${{ secrets.SF_CICD_USERNAME }}" --keyfile server.key --clientid ${{ secrets.SF_CLIENT_SECRET }}
+      
+      # Creating a Scratch Org using the pull request number
+      - name: Creating a Scratch Org
+        run: sf org create scratch --target-dev-hub devhub --name build_${{ github.event.pull_request.number }} --definition-file config/project-scratch-def.json --set-default --duration-days 1
+      
+      # Pushing source to the Scratch Org
+      - name: Pushing source and metadata to the Scratch Org
+        if: ${{ github.event_name == 'pull_request' }}
         run: |
-          node_modules/@salesforce/cli/bin/run force:auth:sfdxurl:store -f SFDX_AUTHURL -s -a ${{ env.ORG_NAME }}
-          node_modules/@salesforce/cli/bin/run force:auth:sfdxurl:store -f SFDX_AUTHURL_DEVHUB -s -a devhub
-
-      - name: Deploy source
-        id: Deploy
-        if: github.event_name == 'push'
-        run: |
-          node_modules/@salesforce/cli/bin/run project deploy start --ignore-conflicts -o ${{ env.ORG_NAME }}
-
-      - name: Check Scratch Org Push
-        id: ScratchOrgCreate
-        if: github.event_name == 'pull_request'
-        run: |
-          node_modules/@salesforce/cli/bin/run org create scratch --definition-file orgs/dev.json --alias MergeScratch --set-default --target-dev-hub devhub -w 20
           echo 'Installing Account Hierarchy package...'
-          node_modules/@salesforce/cli/bin/run project deploy start --source-dir account-hierarchy -c --ignore-conflicts -o MergeScratch
+          sf project deploy start --source-dir account-hierarchy -c --ignore-conflicts -o build_${{ github.event.pull_request.number }}
           echo 'Installing Sprint Estimator package...'
-          node_modules/@salesforce/cli/bin/run project deploy start --source-dir sprint-estimator -c --ignore-conflicts -o MergeScratch
+          sf project deploy start --source-dir sprint-estimator -c --ignore-conflicts -o build_${{ github.event.pull_request.number }}
+
+      # Executing all unit tests
+      - name: Run unit tests
+        run: sf apex run test --wait 30 --test-level RunAllTestsInOrg --code-coverage
+        
 
       - name: Delete Scratch Org
         id: ScratchOrgDelete
-        if: ${{ always() && github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' }}
         run: |
-          node_modules/@salesforce/cli/bin/run org:delete:scratch -o MergeScratch -p
+          sf org:delete:scratch -o build_${{ github.event.pull_request.number }} -p
