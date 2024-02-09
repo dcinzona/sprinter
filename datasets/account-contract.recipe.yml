@@ -1,0 +1,53 @@
+- object: Account
+  nickname: rootAccount
+  fields:
+    Name:
+      fake: Company
+    Description:
+      fake: CatchPhrase
+
+- object: Account
+  nickname: level1
+  count: 3
+  fields:
+    Name:
+      fake: Company
+    Description:
+      fake: CatchPhrase
+    ParentId:
+      random_reference:
+        to: rootAccount
+
+- object: Account
+  nickname: level2
+  count: 3
+  fields:
+    Name:
+      fake: Company
+    Description:
+      fake: CatchPhrase
+    ParentId:
+      random_reference:
+        to: level1
+
+- object: Account
+  count: 10
+  fields:
+    Name:
+      fake: Company
+    Description:
+      fake: CatchPhrase
+    ParentId:
+      random_reference:
+        to: Account
+
+- object: Contract
+  count:
+    random_number:
+      min: 4
+      max: 8
+  fields:
+    Status: Draft
+    AccountId:
+      random_reference:
+        to: Account

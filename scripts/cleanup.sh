@@ -1,0 +1,1 @@
+cci task run delete_data -o objects Entitlement,Contract,Account -o ignore_row_errors True --org devscratch

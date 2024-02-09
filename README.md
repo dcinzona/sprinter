@@ -20,6 +20,7 @@ To work on this project in a scratch org:
 - install the latest beta; `cci task run install_managed_beta --name sprint-estimator --org dev`
 - create a beta: `cci flow run release_unlocked_beta`
 - build test: `cci flow run build_unlocked_test_package`
+- Import sfdx org: `cci org import <sfdx_alias> <cci_alias>`
 
 ... and more.  See the [CumulusCI documentation](https://cumulusci.readthedocs.io/en/latest/index.html) for more information.
 
@@ -83,6 +84,15 @@ sf package install --package AccountHierarchyUnlocked -k password123 -o devscrat
 
 ## Data Manipulation
 
+### Generate fake data with CumulusCI
+This is the preferred way to generate data for testing.  It uses the Snowfakery library to generate data from a recipe file.
+More information here: https://snowfakery.readthedocs.io/en/stable/index.html#advanced-features
+
+```bash
+cci task run snowfakery --recipe datasets/account-contract.recipe.yml --org devscratch 
+```
+
+
 ### Seed Account records with a hierarchy
 
 Insert account records with contracts (assumes you've isntalled the account-hierarchy package and assigned yourself the permission set).
@@ -105,3 +115,10 @@ Example Shell Scripts:
 - SF Import `./sample-data/sf_import.sh`
 
 Documentation: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_test_data_example.htm
+
+## Scanning for common files across packages
+You can use the python script `project-scan.py` to scan for common files across packages.  This is useful for identifying common files that can be moved to a shared package.
+
+```bash
+sh project-scan.sh
+```

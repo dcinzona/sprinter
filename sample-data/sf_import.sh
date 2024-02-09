@@ -1,2 +1,2 @@
-sf data import tree --target-org org-needs-data \
+sf data import tree --target-org devscratch \
     --plan sample-data/data/hierarchy-Account-Contract-plan.json

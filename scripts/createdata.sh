@@ -1,0 +1,1 @@
+cci task run snowfakery --recipe datasets/account-contract.recipe.yml --org devscratch 
