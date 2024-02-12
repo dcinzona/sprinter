@@ -35,6 +35,10 @@ metadata_folders = [
     "staticresources",
 ]
 
+# Special directories (where subfolders replace all components, like LWC)
+special_directories = ["aura", "lwc", "staticresources"]
+files_to_skip = ["jsconfig.json"]
+
 # find all subdirectories within the package directories using os.walk
 # if any of the metadata folders are found, add them to the list of
 # metadata folders to scan
@@ -52,10 +56,6 @@ for package_directory in package_directories_path:
 # for each metadata folder, find all files
 # if any files have the same name, add them to the list of duplicate files
 scanned_files = defaultdict(list)
-
-# Special directories (where subfolders replace all components, like LWC)
-special_directories = ["aura", "lwc"]
-files_to_skip = ["jsconfig.json"]
 
 
 def getKeyForFilePath(filepath) -> str:
