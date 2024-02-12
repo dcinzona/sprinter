@@ -88,6 +88,8 @@ sf package install --package AccountHierarchyUnlocked -k password123 -o devscrat
 This is the preferred way to generate data for testing.  It uses the Snowfakery library to generate data from a recipe file.
 More information here: https://snowfakery.readthedocs.io/en/stable/index.html#advanced-features
 
+*note: make sure you've imported your sfdx org connection into CCI: <br />`cci org import <sfdx_alias> <cci_alias>`*
+
 ```bash
 cci task run snowfakery --recipe datasets/account-contract.recipe.yml --org devscratch 
 ```
