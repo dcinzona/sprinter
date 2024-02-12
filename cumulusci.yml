@@ -1,4 +1,4 @@
-minimum_cumulusci_version: "3.83.0"
+minimum_cumulusci_version: "3.84.0"
 project:
   name: sprint-estimator
   package:
@@ -9,26 +9,31 @@ project:
   source_format: sfdx
 
 tasks:
-  deploy:
-    options:
-      path: sprint-estimator
-  retrieve_changes:
-    options:
-      path: sprint-estimator
   create_package_version:
     options:
       package_type: Unlocked
-  robot:
-    options:
-      suites: robot/sprint-estimator/tests
-      options:
-        outputdir: robot/sprint-estimator/results
-
-  robot_testdoc:
-    options:
-      path: robot/sprint-estimator/tests
-      output: robot/sprint-estimator/doc/sprint-estimator_tests.html
-
   run_tests:
     options:
       required_org_code_coverage_percent: 75
+
+flows:
+  deploy_all:
+    group: sprinter
+    description: Deploy all packages to org, assign appropriate permission sets and deploy sample data.
+    steps:
+      1:
+        task: deploy
+        options:
+          path: account-hierarchy
+      2:
+        task: deploy
+        options:
+          path: sprint-estimator
+      3:
+        task: assign_permission_sets
+        options:
+          api_names: Account_Hierarchy_OWD_FLS,Sprint_Estimator
+      4:
+        task: snowfakery
+        options:
+          recipe: datasets/account-contract.recipe.yml
