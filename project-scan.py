@@ -3,6 +3,7 @@
 # This script is intended to be run from the command line.
 # Usage: python project-scan.py
 
+from operator import eq
 import os
 import json
 from collections import defaultdict
@@ -35,9 +36,35 @@ metadata_folders = [
     "staticresources",
 ]
 
+
+def list_directories(path):
+    return [
+        name for name in os.listdir(path) if os.path.isdir(os.path.join(path, name))
+    ]
+
+
+for package_directory in package_directories_path:
+    # print("Scanning package:", package_directory)
+    # check if folder structure = main/default
+    if "main" in list_directories(package_directory):
+        # print("  Found main folder")
+        package_directory = os.path.join(package_directory, "main", "default")
+        for folder in list_directories(package_directory):
+            metadata_folders.append(folder)
+    else:
+        print("  No main folder found")
+
+# trim string to remove leading and trailing whitespace
+metadata_folders = [x.strip() for x in metadata_folders]
+metadata_folders = list(set(metadata_folders))
+metadata_folders.sort()
+
+print("Metadata folders to scan:\n -", ",\n - ".join(metadata_folders))
+
+
 # Special directories (where subfolders replace all components, like LWC)
-special_directories = ["aura", "lwc", "staticresources"]
-files_to_skip = ["jsconfig.json"]
+special_directories = ["aura", "lwc"]
+files_to_skip = ["jsconfig.json", ".eslintrc.json", "package.xml", ".DS_Store"]
 
 # find all subdirectories within the package directories using os.walk
 # if any of the metadata folders are found, add them to the list of
@@ -76,7 +103,8 @@ def get_duplicate_files(metadata_folder, package_path):
         for file in files:
             if file in files_to_skip:
                 continue
-            # if the current directory is a special directory, we only need to check subfolders, not files
+            # if the current directory is a special directory, we only need to
+            # check subfolders, not files
             rp = os.path.relpath(root, package_path)
             relative_path = rp.replace(package_path, "")
             file_path = os.path.join(relative_path, file)
@@ -105,10 +133,82 @@ for key in scanned_files.keys():
 
 # print results if dupes found
 if len(unique_duplicate_files) == 0:
-    print("No duplicate files found.")
+    print("\nNo duplicate files found.")
+    exit()
 else:
     print("Duplicate Components:")
     for key in unique_duplicate_files.keys():
+        # # if key doesn't contain special directories, skip
+        # if not any(x in key for x in special_directories):
+        #     continue
         print(" ", key)
         for package in unique_duplicate_files[key]:
             print("   ->", package)
+
+
+def copy_file(file_path, new_file_path):
+    try:
+        if os.path.isdir(file_path):
+            os.makedirs(new_file_path, exist_ok=True)
+            os.system(f"cp -r {file_path}/* {new_file_path}")
+        else:
+            os.makedirs(os.path.dirname(new_file_path), exist_ok=True)
+            os.system(f'cp "{file_path}" "{new_file_path}"')
+    except Exception as e:
+        print(f"An error occurred while copying the file: {e}")
+
+
+# copy duplicate metadata to a new folder
+# for each duplicate file, copy the file to a new folder
+# the new folder will be named "duplicate_metadata"
+# the file will be copied to a subfolder with the name of the package directory
+# and the metadata folder
+def copy_duplicate_metadata():
+    for key in unique_duplicate_files.keys():
+        for package in unique_duplicate_files[key]:
+            if package == "force-app":
+                continue
+            # get the file path
+            file_path = os.path.join(package, key)
+            # get the new file path
+            new_file_path = os.path.join("duplicate_metadata", key)
+            copy_file(file_path, new_file_path)
+
+
+def list_files(path):
+    exclude_files = set(files_to_skip)
+    return set(
+        os.path.relpath(os.path.join(dirpath, file), path)
+        for dirpath, dirnames, files in os.walk(path)
+        for file in files
+        if file not in exclude_files
+    )
+
+
+def find_unique_in_dir(dir1, dir2):
+    files_dir1 = list_files(dir1)
+    files_dir2 = list_files(dir2)
+    if files_dir1 == files_dir2:
+        print(" * Directories are identical")
+        return set()
+
+    # check if files in dir2 are not in dir1
+    if files_dir1.issuperset(files_dir2):
+        print(f" * Files in {dir2} are not in {dir1}")
+        return files_dir1.difference(files_dir2)
+
+    print(f" * Files in {dir1} are not in {dir2}")
+    return files_dir2.difference(files_dir1)
+
+
+def show_uniques(run_copy=True):
+    copy_duplicate_metadata() if run_copy else None
+    for package in package_directories_path:
+        print(f"\n Unique files in {package}:")
+        unique_files_in_dir = find_unique_in_dir(package, "./duplicate_metadata")
+        for file in unique_files_in_dir:
+            print(f"  - {file}")
+
+
+# usage
+show_uniques(False)
