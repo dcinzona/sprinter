@@ -3,7 +3,6 @@
 # This script is intended to be run from the command line.
 # Usage: python project-scan.py
 
-from operator import eq
 import os
 import json
 from collections import defaultdict
