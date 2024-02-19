@@ -136,10 +136,10 @@ def copy_file(file_path, new_file_path):
     try:
         if os.path.isdir(file_path):
             os.makedirs(new_file_path, exist_ok=True)
-            os.system(f"cp -r {file_path}/* {new_file_path}")
+            os.system(f"mv -r {file_path}/* {new_file_path}")
         else:
             os.makedirs(os.path.dirname(new_file_path), exist_ok=True)
-            os.system(f'cp "{file_path}" "{new_file_path}"')
+            os.system(f'mv "{file_path}" "{new_file_path}"')
     except Exception as e:
         print(f"An error occurred while copying the file: {e}")
 
@@ -151,8 +151,8 @@ def copy_file(file_path, new_file_path):
 # and the metadata folder
 def copy_duplicate_metadata():
     # clear the duplicate_metadata folder if it exists
-    if os.path.exists(common_metadata_dir):
-        os.system(f"rm -rf {common_metadata_dir}")
+    # if os.path.exists(common_metadata_dir):
+    #     os.system(f"mv {common_metadata_dir} {common_metadata_dir}_old")
     for key in unique_duplicate_files.keys():
         for package in unique_duplicate_files[key]:
             if package == "force-app":
