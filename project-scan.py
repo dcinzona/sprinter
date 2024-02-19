@@ -12,6 +12,7 @@ sfdx_project = None
 with open("sfdx-project.json") as f:
     sfdx_project = json.load(f)
 package_directories = sfdx_project["packageDirectories"]
+common_metadata_dir = "./common_metadata"
 
 # get path of each package directory
 package_directories_path = []
@@ -130,20 +131,6 @@ for key in scanned_files.keys():
     if len(scanned_files[key]) > 1:
         unique_duplicate_files[key] = scanned_files[key]
 
-# print results if dupes found
-if len(unique_duplicate_files) == 0:
-    print("\nNo duplicate files found.")
-    exit()
-else:
-    print("Duplicate Components:")
-    for key in unique_duplicate_files.keys():
-        # # if key doesn't contain special directories, skip
-        # if not any(x in key for x in special_directories):
-        #     continue
-        print(" ", key)
-        for package in unique_duplicate_files[key]:
-            print("   ->", package)
-
 
 def copy_file(file_path, new_file_path):
     try:
@@ -163,6 +150,9 @@ def copy_file(file_path, new_file_path):
 # the file will be copied to a subfolder with the name of the package directory
 # and the metadata folder
 def copy_duplicate_metadata():
+    # clear the duplicate_metadata folder if it exists
+    if os.path.exists(common_metadata_dir):
+        os.system(f"rm -rf {common_metadata_dir}")
     for key in unique_duplicate_files.keys():
         for package in unique_duplicate_files[key]:
             if package == "force-app":
@@ -170,7 +160,7 @@ def copy_duplicate_metadata():
             # get the file path
             file_path = os.path.join(package, key)
             # get the new file path
-            new_file_path = os.path.join("duplicate_metadata", key)
+            new_file_path = os.path.join(common_metadata_dir, key)
             copy_file(file_path, new_file_path)
 
 
@@ -200,14 +190,16 @@ def find_unique_in_dir(dir1, dir2):
     return files_dir2.difference(files_dir1)
 
 
-def show_uniques(run_copy=True):
-    copy_duplicate_metadata() if run_copy else None
-    for package in package_directories_path:
-        print(f"\n Unique files in {package}:")
-        unique_files_in_dir = find_unique_in_dir(package, "./duplicate_metadata")
-        for file in unique_files_in_dir:
-            print(f"  - {file}")
-
-
 # usage
-show_uniques(False)
+copy_duplicate_metadata()
+# replace main/default/ with empty string
+list_of_duplicates = [
+    x.replace("main/default/", "") for x in list_files(common_metadata_dir)
+]
+if len(list_of_duplicates) == 0:
+    print("\nNo duplicate files found.")
+    exit()
+print("\n\nDuplicate Metadata folder contents:\n")
+list_of_duplicates.sort()
+for file in list_of_duplicates:
+    print(f" - {file}")
