@@ -1,3 +1,5 @@
+## Setting up Single Sign On
+
 Create a new Single Sign On configuration in your idp-sub org.
 Replace any tokens that have $$$ in them with the appropriate values.
 
