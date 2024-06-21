@@ -31,12 +31,12 @@ flows:
       1:
         task: deploy
         options:
-          path: identity/main/common
+          path: identity/common
           org: idp
       2:
         task: deploy
         options:
-          path: identity/main/common
+          path: identity/common
           org: idp-sub
 
   deploy_all:
