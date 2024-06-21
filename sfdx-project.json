@@ -2,7 +2,11 @@
     "namespace": "",
     "packageDirectories": [
         {
-            "default": true,
+            "path": "force-app",
+            "default": true
+        },
+        {
+            "default": false,
             "path": "sprint-estimator",
             "package": "sprint-estimator",
             "versionName": "ver 0.1",
@@ -16,6 +20,14 @@
             "versionName": "ver 0.1",
             "versionNumber": "0.1.0.NEXT",
             "versionDescription": "Used to estimate the sprint LOE"
+        },
+        {
+            "default": false,
+            "path": "identity",
+            "package": "identity",
+            "versionName": "ver 0.1",
+            "versionNumber": "0.1.0.NEXT",
+            "versionDescription": "Used to test SSO identity"
         }
     ],
     "sourceApiVersion": "59.0",

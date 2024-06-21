@@ -8,6 +8,11 @@ project:
     default_branch: "main"
   source_format: sfdx
 
+orgs:
+    scratch:
+        idp:
+            config_file: orgs/idp.json
+
 tasks:
   create_package_version:
     options:
