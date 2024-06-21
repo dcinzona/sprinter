@@ -109,4 +109,4 @@ sh project-scan.sh
 
 Check the `identity` folder for a proof of concept on setting up a round-robin SAML SSO configuration across multiple orgs.  This is a work in progress.
 
-Details in the [Identity README](identity/README.md)
+Details in the [Identity README](identity/Readme.md)
