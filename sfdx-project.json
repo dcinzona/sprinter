@@ -23,11 +23,39 @@
         },
         {
             "default": false,
-            "path": "identity",
-            "package": "identity",
+            "path": "identity/common",
+            "package": "identity-common",
             "versionName": "ver 0.1",
             "versionNumber": "0.1.0.NEXT",
             "versionDescription": "Used to test SSO identity"
+        },
+        {
+            "default": false,
+            "path": "identity/idp",
+            "package": "identity-idp",
+            "versionName": "ver 0.1",
+            "versionNumber": "0.1.0.NEXT",
+            "versionDescription": "Identity SSO IdP",
+            "dependencies": [
+                {
+                    "package": "identity-common",
+                    "versionNumber": "0.1.0.LATEST"
+                }
+            ]
+        },
+        {
+            "default": false,
+            "path": "identity/idp-sub",
+            "package": "identity-idp-sub",
+            "versionName": "ver 0.1",
+            "versionNumber": "0.1.0.NEXT",
+            "versionDescription": "Identity SSO Subscriber",
+            "dependencies": [
+                {
+                    "package": "identity-common",
+                    "versionNumber": "0.1.0.LATEST"
+                }
+            ]
         }
     ],
     "sourceApiVersion": "59.0",
