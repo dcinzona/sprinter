@@ -1,7 +1,13 @@
 {
   "orgName": "IdP Org",
   "edition": "Developer",
-  "features": ["Communities"],
+  "features": [
+    "Communities",
+    "PersonAccounts",
+    "IdentityProvisioningFeatures",
+    "SalesforceIdentityForCommunities"
+  ],
+  "hasSampleData": true,
   "settings": {
     "communitiesSettings": {
         "enableNetworksEnabled": true

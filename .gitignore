@@ -47,7 +47,8 @@ $RECYCLE.BIN/
 # Editors
 *.sublime-project
 *.sublime-workspace
-.vscode
+.vscode/*
+!.vscode/tasks.json
 .idea
 .project
 .settings
