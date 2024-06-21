@@ -1,4 +1,4 @@
-global class AutocreatedConfigSelfReg1718931226481 implements Auth.ConfigurableSelfRegHandler {
+global class SelfRegController implements Auth.ConfigurableSelfRegHandler {
 
 	private final Long CURRENT_TIME = Datetime.now().getTime();
 	private final String[] UPPERCASE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
