@@ -55,3 +55,4 @@ $RECYCLE.BIN/
 /IlluminatedCloud/
 
 force-app/*
+.pmdCache

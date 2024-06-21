@@ -104,3 +104,9 @@ You can use the python script `project-scan.py` to scan for common files across 
 ```bash
 sh project-scan.sh
 ```
+
+## Identity Round Robin SAML SSO POC
+
+Check the `identity` folder for a proof of concept on setting up a round-robin SAML SSO configuration across multiple orgs.  This is a work in progress.
+
+Details in the [Identity README](identity/README.md)

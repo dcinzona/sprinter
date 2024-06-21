@@ -12,6 +12,8 @@ orgs:
     scratch:
         idp:
             config_file: orgs/idp.json
+        idp-sub:
+            config_file: orgs/idp-sub.json
 
 tasks:
   create_package_version:
@@ -22,6 +24,21 @@ tasks:
       required_org_code_coverage_percent: 75
 
 flows:
+  idp:
+    group: identity
+    description: Create scratch orgs and deploy metadata
+    steps:
+      1:
+        task: deploy
+        options:
+          path: identity/main/common
+          org: idp
+      2:
+        task: deploy
+        options:
+          path: identity/main/common
+          org: idp-sub
+
   deploy_all:
     group: sprinter
     description: Deploy all packages to org, assign appropriate permission sets and deploy sample data.
