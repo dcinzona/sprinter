@@ -7,7 +7,7 @@
         },
         {
             "default": false,
-            "path": "sprint-estimator",
+            "path": "packages/sprint-estimator",
             "package": "sprint-estimator",
             "versionName": "ver 0.1",
             "versionNumber": "0.1.0.NEXT",
@@ -15,7 +15,7 @@
         },
         {
             "default": false,
-            "path": "account-hierarchy",
+            "path": "packages/account-hierarchy",
             "package": "account-hierarchy",
             "versionName": "ver 0.1",
             "versionNumber": "0.1.0.NEXT",
@@ -23,7 +23,7 @@
         },
         {
             "default": false,
-            "path": "identity/common",
+            "path": "packages/identity/common",
             "package": "identity-common",
             "versionName": "ver 0.1",
             "versionNumber": "0.1.0.NEXT",
@@ -31,7 +31,7 @@
         },
         {
             "default": false,
-            "path": "identity/idp",
+            "path": "packages/identity/idp",
             "package": "identity-idp",
             "versionName": "ver 0.1",
             "versionNumber": "0.1.0.NEXT",
@@ -45,7 +45,7 @@
         },
         {
             "default": false,
-            "path": "identity/idp-sub",
+            "path": "packages/identity/idp-sub",
             "package": "identity-idp-sub",
             "versionName": "ver 0.1",
             "versionNumber": "0.1.0.NEXT",
@@ -58,7 +58,7 @@
             ]
         }
     ],
-    "sourceApiVersion": "59.0",
+    "sourceApiVersion": "60.0",
     "packageAliases": {
         "sprint-estimator": "0Hoak000000009hCAA"
     }

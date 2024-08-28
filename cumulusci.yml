@@ -1,9 +1,9 @@
 minimum_cumulusci_version: "3.84.0"
 project:
-  name: sprint-estimator
+  name: sf-packs
   package:
-    name: sprint-estimator
-    api_version: "59.0"
+    name: sf-packs
+    api_version: "60.0"
   git:
     default_branch: "main"
   source_format: sfdx
@@ -31,26 +31,22 @@ flows:
       1:
         task: deploy
         options:
-          path: identity/common
+          path: packages/identity/common
           org: idp
       2:
         task: deploy
         options:
-          path: identity/common
+          path: packages/identity/common
           org: idp-sub
 
   deploy_all:
-    group: sprinter
+    group: Deployments
     description: Deploy all packages to org, assign appropriate permission sets and deploy sample data.
     steps:
       1:
         task: deploy
         options:
-          path: account-hierarchy
-      2:
-        task: deploy
-        options:
-          path: sprint-estimator
+          path: packages
       3:
         task: assign_permission_sets
         options:
