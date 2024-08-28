@@ -1,0 +1,6 @@
+# Dependencies are kept up-to-date automatically in *.txt files by the
+# upgrade-deps.yml workflow. Avoid pinning specific versions here unless required
+# for stability.
+
+cumulusci>=3.89.0
+flake8>=3.8.3

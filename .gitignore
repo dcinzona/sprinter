@@ -56,4 +56,3 @@ $RECYCLE.BIN/
 
 force-app/*
 .pmdCache
-package-lock.json

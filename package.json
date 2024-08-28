@@ -1,5 +1,16 @@
-{
-  "dependencies": {
-    "@salesforce/cli": "^2.26.10"
-  }
+{  
+    "name": "sf-packs",
+    "description": "Salesforce packaging example / POC",
+    "version": "0.1.0",
+    "private": true,
+    "license": "BSD-3-Clause",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dcinzona/sprinter.git"
+    },
+    "dependencies": {
+        "prettier": "^2.7.1",
+        "@salesforce/cli": "^2.55.6",
+        "prettier-plugin-apex": "^1.2.0"
+    }
 }
